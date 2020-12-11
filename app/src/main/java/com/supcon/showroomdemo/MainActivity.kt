@@ -69,6 +69,8 @@ class MainActivity : BaseActivity() {
                 if (users.isEmpty()) {
                     userDao!!.insert(user)
                     LogUtils.d("添加用户到数据库：" + user.name)
+                }else {
+                    LogUtils.d("该用户已经有了不再添加")
                 }
             }
         } catch (e: JSONException) {

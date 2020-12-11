@@ -1,11 +1,32 @@
 {
   "default_users": [
     {
-      "name": "姚冰",
+      "name": "姚冰0",
       "psd": "123456",
       "id": 1,
       "nfcId": 1,
       "faceId": 1
-    }
+    },
+    {
+      "name": "姚冰1",
+      "psd": "123456",
+      "id": 2,
+      "nfcId": 1,
+      "faceId": 1
+    },
+    {
+      "name": "姚冰2",
+      "psd": "123456",
+      "id": 3,
+      "nfcId": 1,
+      "faceId": 1
+    },
+    {
+      "name": "姚冰3",
+      "psd": "123456",
+      "id": 4,
+      "nfcId": 1,
+      "faceId": 1
+    },
   ]
 }

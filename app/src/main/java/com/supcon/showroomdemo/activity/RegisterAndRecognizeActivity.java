@@ -16,8 +16,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
+
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
@@ -30,6 +35,7 @@ import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.google.gson.Gson;
 import com.supcon.showroomdemo.App;
+import com.supcon.showroomdemo.MainActivity;
 import com.supcon.showroomdemo.R;
 import com.supcon.showroomdemo.faceserver.CompareResult;
 import com.supcon.showroomdemo.faceserver.FaceServer;
@@ -226,6 +232,36 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         int spanCount = (int) (dm.widthPixels / (getResources().getDisplayMetrics().density * 100 + 0.5f));
         recyclerShowFaceInfo.setLayoutManager(new GridLayoutManager(this, spanCount));
         recyclerShowFaceInfo.setItemAnimator(new DefaultItemAnimator());
+
+        DaoSession daoSession = App.getAppContext().getDaoSession();
+        UserDao userDao = daoSession.getUserDao();
+        ArrayList<User> users = (ArrayList<User>) userDao.queryBuilder().list();
+        String[] names = new String[users.size()];
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            names[i] = user.getName();
+        }
+        // 初始化控件
+        Spinner spinner = (Spinner) findViewById(R.id.et_username);
+        // 建立数据源
+        // 建立Adapter并且绑定数据源
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, names);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //绑定 Adapter到控件
+        spinner .setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+
+                Toast.makeText(RegisterAndRecognizeActivity.this, "你点击的是:"+names[pos], 2000).show();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+        });
+
     }
 
     /**
