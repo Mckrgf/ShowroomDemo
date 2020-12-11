@@ -1,0 +1,11 @@
+{
+  "default_users": [
+    {
+      "name": "姚冰",
+      "psd": "123456",
+      "id": 1,
+      "nfcId": 1,
+      "faceId": 1
+    }
+  ]
+}

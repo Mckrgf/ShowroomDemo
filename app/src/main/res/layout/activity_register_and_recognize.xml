@@ -31,6 +31,11 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/et_username"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

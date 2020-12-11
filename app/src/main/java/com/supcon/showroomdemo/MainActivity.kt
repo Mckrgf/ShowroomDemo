@@ -9,8 +9,14 @@ import com.arcsoft.face.ActiveFileInfo
 import com.arcsoft.face.ErrorInfo
 import com.arcsoft.face.FaceEngine
 import com.arcsoft.face.enums.RuntimeABI
+import com.blankj.utilcode.util.LogUtils
+import com.google.gson.Gson
 import com.supcon.showroomdemo.activity.RegisterAndRecognizeActivity
 import com.supcon.showroomdemo.common.Constants
+import com.supcon.showroomdemo.model.DaoSession
+import com.supcon.showroomdemo.model.User
+import com.supcon.showroomdemo.model.UserDao
+import com.supcon.showroomdemo.util.Util
 import com.yaobing.module_middleware.activity.BaseActivity
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -18,8 +24,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONException
+import org.json.JSONObject
 
 class MainActivity : BaseActivity() {
+    private var userDao: UserDao? = null
+    private var daoSession: DaoSession? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,6 +42,37 @@ class MainActivity : BaseActivity() {
             val intent = Intent()
             intent.setClass(this,RegisterAndRecognizeActivity::class.java)
             startActivity(intent)
+        }
+
+        // get the note DAO
+        daoSession = (application as App).daoSession
+        userDao = daoSession?.userDao
+        initDB()
+    }
+
+    private fun initDB() {
+        try {
+            val appArray = JSONObject(
+                Util.getJson(
+                    this,
+                    "app_init.json"
+                )
+            ).getJSONArray("default_users")
+            for (i in 0 until appArray.length()) {
+                val userJson = appArray[i] as JSONObject
+                val user =
+                    Gson().fromJson(
+                        userJson.toString(),
+                        User::class.java
+                    )
+                val users = userDao!!.queryBuilder().where(UserDao.Properties.Id.eq(user.id)).list() as List<*>
+                if (users.isEmpty()) {
+                    userDao!!.insert(user)
+                    LogUtils.d("添加用户到数据库：" + user.name)
+                }
+            }
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
     }
 

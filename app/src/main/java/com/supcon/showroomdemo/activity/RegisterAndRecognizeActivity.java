@@ -26,14 +26,21 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
+import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.google.gson.Gson;
+import com.supcon.showroomdemo.App;
 import com.supcon.showroomdemo.R;
 import com.supcon.showroomdemo.faceserver.CompareResult;
 import com.supcon.showroomdemo.faceserver.FaceServer;
+import com.supcon.showroomdemo.model.DaoSession;
 import com.supcon.showroomdemo.model.DrawInfo;
 import com.supcon.showroomdemo.model.FacePreviewInfo;
+import com.supcon.showroomdemo.model.User;
+import com.supcon.showroomdemo.model.UserDao;
 import com.supcon.showroomdemo.util.ConfigUtil;
 import com.supcon.showroomdemo.util.DrawHelper;
+import com.supcon.showroomdemo.util.Util;
 import com.supcon.showroomdemo.util.camera.CameraHelper;
 import com.supcon.showroomdemo.util.camera.CameraListener;
 import com.supcon.showroomdemo.util.face.FaceHelper;
@@ -45,6 +52,10 @@ import com.supcon.showroomdemo.util.face.RequestLivenessStatus;
 import com.supcon.showroomdemo.widget.FaceRectView;
 import com.supcon.showroomdemo.widget.FaceSearchResultAdapter;
 import com.yaobing.module_middleware.activity.BaseActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -166,6 +177,8 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
             Manifest.permission.READ_PHONE_STATE
 
     };
+    private UserDao userDao;
+    private DaoSession daoSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +199,9 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         FaceServer.getInstance().init(this);
 
         initView();
+
+
+
     }
 
     private void initView() {
@@ -724,6 +740,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         if (registerStatus == REGISTER_STATUS_DONE) {
             registerStatus = REGISTER_STATUS_READY;
         }
+
     }
 
     /**
