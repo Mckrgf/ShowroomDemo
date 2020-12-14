@@ -12,6 +12,7 @@ import com.arcsoft.face.FaceEngine
 import com.arcsoft.face.enums.RuntimeABI
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
+import com.supcon.showroomdemo.activity.LoginActivity
 import com.supcon.showroomdemo.activity.RegisterAndRecognizeActivity
 import com.supcon.showroomdemo.common.Constants
 import com.supcon.showroomdemo.faceserver.FaceServer
@@ -48,6 +49,12 @@ class MainActivity : BaseActivity() {
 
         bt_delete.setOnClickListener {
             clearFaces()
+        }
+
+        bt_login.setOnClickListener {
+            val intent = Intent()
+            intent.setClass(this,LoginActivity::class.java)
+            startActivity(intent)
         }
 
         // get the note DAO
