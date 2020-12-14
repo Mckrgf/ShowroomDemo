@@ -68,7 +68,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
+public class RegisterActivity extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
     private static final String TAG = "RegisterAndRecognize";
     private static final int MAX_DETECT_NUM = 10;
     /**
@@ -181,14 +181,7 @@ public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlob
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         //本地人脸库初始化
         FaceServer.getInstance().init(this);
-
-        initData();
-
         initView();
-    }
-
-    private void initData() {
-        user = (User) getIntent().getSerializableExtra(Constants.INTENT_KEY_USER);
     }
 
     private void initView() {
@@ -452,7 +445,7 @@ public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlob
                             .flQueueSize(MAX_DETECT_NUM)
                             .previewSize(previewSize)
                             .faceListener(faceListener)
-                            .trackedFaceCount(trackedFaceCount == null ? ConfigUtil.getTrackedFaceCount(LoginByFace.this.getApplicationContext()) : trackedFaceCount)
+                            .trackedFaceCount(trackedFaceCount == null ? ConfigUtil.getTrackedFaceCount(RegisterActivity.this.getApplicationContext()) : trackedFaceCount)
                             .build();
                 }
             }
@@ -535,7 +528,7 @@ public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlob
             Observable.create(new ObservableOnSubscribe<Boolean>() {
                 @Override
                 public void subscribe(ObservableEmitter<Boolean> emitter) {
-                    boolean success = FaceServer.getInstance().registerNv21(LoginByFace.this, nv21.clone(), previewSize.width, previewSize.height,
+                    boolean success = FaceServer.getInstance().registerNv21(RegisterActivity.this, nv21.clone(), previewSize.width, previewSize.height,
                             facePreviewInfoList.get(0).getFaceInfo(), currentUser.getName() + ":" + currentUser.getId());
                     emitter.onNext(success);
                 }
@@ -673,8 +666,7 @@ public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlob
 
 //                        Log.i(TAG, "onNext: fr search get result  = " + System.currentTimeMillis() + " trackId = " + requestId + "  similar = " + compareResult.getSimilar());
 
-                        int userId = StringUtil.getUserId(compareResult.getUserName());
-                        if (compareResult.getSimilar() > SIMILAR_THRESHOLD && userId == user.getId()) {
+                        if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
                             boolean isAdded = false;
                             if (compareResultList == null) {
                                 requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);

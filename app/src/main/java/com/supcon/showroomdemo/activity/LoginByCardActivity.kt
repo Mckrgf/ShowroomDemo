@@ -13,7 +13,7 @@ import com.supcon.showroomdemo.common.Constants
 import com.supcon.showroomdemo.model.UserDao
 import com.supcon.showroomdemo.util.DataTransform
 
-class LoginByCard : BaseNFCActivity(), View.OnClickListener {
+class LoginByCardActivity : BaseNFCActivity(), View.OnClickListener {
     //读取出来的id
     private var mId: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +43,7 @@ class LoginByCard : BaseNFCActivity(), View.OnClickListener {
         if (users.size > 0) {
             ToastUtils.showShort("NFC卡登录成功，开始人脸识别")
             val intent = Intent()
-            intent.setClass(this, LoginByFace::class.java)
+            intent.setClass(this, LoginByFaceActivity::class.java)
             intent.putExtra(Constants.INTENT_KEY_USER,users[0])
             startActivity(intent)
         }else {

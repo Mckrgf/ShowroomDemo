@@ -15,7 +15,7 @@ import android.nfc.tech.NfcV;
 import android.os.Bundle;
 
 import com.blankj.utilcode.util.SPUtils;
-import com.supcon.showroomdemo.activity.LoginByCard;
+import com.supcon.showroomdemo.activity.LoginByCardActivity;
 import com.yaobing.module_middleware.activity.BaseActivity;
 
 public abstract class BaseNFCActivity extends BaseActivity {
@@ -38,7 +38,7 @@ public abstract class BaseNFCActivity extends BaseActivity {
     protected void initNFC() {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         mPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, LoginByCard.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);//
+                new Intent(this, LoginByCardActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);//
         tagDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);//ACTION_TECH_DISCOVERED
         try {
             tagDetected.addDataType("*/*");

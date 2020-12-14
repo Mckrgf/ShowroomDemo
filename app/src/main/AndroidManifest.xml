@@ -43,11 +43,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoginByFace"
+        <activity android:name=".activity.LoginByFaceActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.RegisterActivity"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".activity.LoginByCard"
+            android:name=".activity.LoginByCardActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
