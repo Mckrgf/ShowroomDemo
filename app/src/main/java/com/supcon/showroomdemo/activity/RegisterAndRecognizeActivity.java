@@ -4,10 +4,8 @@ import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.arcsoft.face.AgeInfo;
 import com.arcsoft.face.ErrorInfo;
@@ -31,11 +28,8 @@ import com.arcsoft.face.GenderInfo;
 import com.arcsoft.face.LivenessInfo;
 import com.arcsoft.face.enums.DetectFaceOrientPriority;
 import com.arcsoft.face.enums.DetectMode;
-import com.blankj.utilcode.util.LogUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.google.gson.Gson;
 import com.supcon.showroomdemo.App;
-import com.supcon.showroomdemo.MainActivity;
 import com.supcon.showroomdemo.R;
 import com.supcon.showroomdemo.faceserver.CompareResult;
 import com.supcon.showroomdemo.faceserver.FaceServer;
@@ -46,7 +40,6 @@ import com.supcon.showroomdemo.model.User;
 import com.supcon.showroomdemo.model.UserDao;
 import com.supcon.showroomdemo.util.ConfigUtil;
 import com.supcon.showroomdemo.util.DrawHelper;
-import com.supcon.showroomdemo.util.Util;
 import com.supcon.showroomdemo.util.camera.CameraHelper;
 import com.supcon.showroomdemo.util.camera.CameraListener;
 import com.supcon.showroomdemo.util.face.FaceHelper;
@@ -58,10 +51,6 @@ import com.supcon.showroomdemo.util.face.RequestLivenessStatus;
 import com.supcon.showroomdemo.widget.FaceRectView;
 import com.supcon.showroomdemo.widget.FaceSearchResultAdapter;
 import com.yaobing.module_middleware.activity.BaseActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -175,16 +164,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
      * 识别阈值
      */
     private static final float SIMILAR_THRESHOLD = 0.8F;
-    /**
-     * 所需的所有权限信息
-     */
-    private static final String[] NEEDED_PERMISSIONS = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_PHONE_STATE
 
-    };
-    private UserDao userDao;
-    private DaoSession daoSession;
     private ArrayList<User> users;
     private String[] names;
     private User currentUser;
@@ -196,21 +176,12 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         //保持亮屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            WindowManager.LayoutParams attributes = getWindow().getAttributes();
-//            attributes.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-//            getWindow().setAttributes(attributes);
-//        }
-
         // Activity启动后就锁定为启动时的方向
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         //本地人脸库初始化
         FaceServer.getInstance().init(this);
 
         initView();
-
-
-
     }
 
     private void initView() {
@@ -221,12 +192,8 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         faceRectView = findViewById(R.id.single_camera_face_rect_view);
         switchLivenessDetect = findViewById(R.id.single_camera_switch_liveness_detect);
         switchLivenessDetect.setChecked(livenessDetect);
-        switchLivenessDetect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                livenessDetect = isChecked;
-            }
-        });
+        switchLivenessDetect.setOnCheckedChangeListener((buttonView, isChecked) -> livenessDetect = isChecked);
+
         RecyclerView recyclerShowFaceInfo = findViewById(R.id.single_camera_recycler_view_person);
         compareResultList = new ArrayList<>();
         adapter = new FaceSearchResultAdapter(compareResultList, this);
@@ -246,25 +213,17 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         }
         // 初始化控件
         Spinner spinner = (Spinner) findViewById(R.id.et_username);
-        // 建立数据源
-        // 建立Adapter并且绑定数据源
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, names);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //绑定 Adapter到控件
         spinner .setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int pos, long id) {
-
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 currentUser = users.get(pos);
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Another interface callback
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
-
     }
 
     /**
@@ -329,7 +288,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
 
     @Override
     protected void onDestroy() {
-
         if (cameraHelper != null) {
             cameraHelper.release();
             cameraHelper = null;
@@ -407,7 +365,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
                                     });
                         }
                     }
-
                 }
                 //特征提取失败
                 else {
@@ -459,8 +416,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
                     }
                 }
             }
-
-
         };
 
 
@@ -636,18 +591,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         drawHelper.draw(faceRectView, drawInfoList);
     }
 
-//    @Override
-//    void afterRequestPermission(int requestCode, boolean isAllGranted) {
-//        if (requestCode == ACTION_REQUEST_PERMISSIONS) {
-//            if (isAllGranted) {
-//                initEngine();
-//                initCamera();
-//            } else {
-//                ToastUtils.showShort(getString(R.string.permission_denied));
-//            }
-//        }
-//    }
-
     /**
      * 删除已经离开的人脸
      *
@@ -768,7 +711,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
                 });
     }
 
-
     /**
      * 将准备注册的状态置为{@link #REGISTER_STATUS_READY}
      *
@@ -778,7 +720,6 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         if (registerStatus == REGISTER_STATUS_DONE) {
             registerStatus = REGISTER_STATUS_READY;
         }
-
     }
 
     /**
@@ -803,12 +744,8 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
     @Override
     public void onGlobalLayout() {
         previewView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//        if (!checkPermissions(NEEDED_PERMISSIONS)) {
-//            ActivityCompat.requestPermissions(this, NEEDED_PERMISSIONS, ACTION_REQUEST_PERMISSIONS);
-//        } else {
             initEngine();
             initCamera();
-//        }
     }
 
     /**
