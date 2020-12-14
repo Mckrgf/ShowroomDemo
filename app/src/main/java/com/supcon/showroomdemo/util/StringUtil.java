@@ -54,6 +54,13 @@ public class StringUtil {
 		return true;
 	}
 
+
+	public static int getUserId(String str) {
+		int index = str.indexOf(":");
+		String idS = str.substring(index+1);
+		return Integer.parseInt(idS);
+	}
+
 	// Empty checks
 	// -----------------------------------------------------------------------
 

@@ -6,13 +6,15 @@ import org.greenrobot.greendao.annotation.Index;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.Generated;
 
+import java.io.Serializable;
+
 /**
  * @author : yaobing
  * @date : 2020/12/11 10:57
  * @desc :
  */
 @Entity
-public class User {
+public class User implements Serializable {
 
     @Id
     private Long id;
@@ -67,5 +69,7 @@ public class User {
     public void setFaceId(String faceId) {
         this.faceId = faceId;
     }
+
+    private static final long serialVersionUID = 1L;
 }
 

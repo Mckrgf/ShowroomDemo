@@ -12,8 +12,8 @@ import com.arcsoft.face.FaceEngine
 import com.arcsoft.face.enums.RuntimeABI
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
-import com.supcon.showroomdemo.activity.LoginActivity
-import com.supcon.showroomdemo.activity.RegisterAndRecognizeActivity
+import com.supcon.showroomdemo.activity.LoginByCard
+import com.supcon.showroomdemo.activity.LoginByFace
 import com.supcon.showroomdemo.common.Constants
 import com.supcon.showroomdemo.faceserver.FaceServer
 import com.supcon.showroomdemo.model.DaoSession
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity() {
 
         bt_scan.setOnClickListener {
             val intent = Intent()
-            intent.setClass(this,RegisterAndRecognizeActivity::class.java)
+            intent.setClass(this, LoginByFace::class.java)
             startActivity(intent)
         }
 
@@ -53,7 +53,7 @@ class MainActivity : BaseActivity() {
 
         bt_login.setOnClickListener {
             val intent = Intent()
-            intent.setClass(this,LoginActivity::class.java)
+            intent.setClass(this,LoginByCard::class.java)
             startActivity(intent)
         }
 

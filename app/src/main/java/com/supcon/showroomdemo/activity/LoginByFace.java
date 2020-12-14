@@ -1,6 +1,5 @@
 package com.supcon.showroomdemo.activity;
 
-import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -16,7 +15,6 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -31,6 +29,7 @@ import com.arcsoft.face.enums.DetectMode;
 import com.blankj.utilcode.util.ToastUtils;
 import com.supcon.showroomdemo.App;
 import com.supcon.showroomdemo.R;
+import com.supcon.showroomdemo.common.Constants;
 import com.supcon.showroomdemo.faceserver.CompareResult;
 import com.supcon.showroomdemo.faceserver.FaceServer;
 import com.supcon.showroomdemo.model.DaoSession;
@@ -40,6 +39,7 @@ import com.supcon.showroomdemo.model.User;
 import com.supcon.showroomdemo.model.UserDao;
 import com.supcon.showroomdemo.util.ConfigUtil;
 import com.supcon.showroomdemo.util.DrawHelper;
+import com.supcon.showroomdemo.util.StringUtil;
 import com.supcon.showroomdemo.util.camera.CameraHelper;
 import com.supcon.showroomdemo.util.camera.CameraListener;
 import com.supcon.showroomdemo.util.face.FaceHelper;
@@ -68,7 +68,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
+public class LoginByFace extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
     private static final String TAG = "RegisterAndRecognize";
     private static final int MAX_DETECT_NUM = 10;
     /**
@@ -168,6 +168,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
     private ArrayList<User> users;
     private String[] names;
     private User currentUser;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +182,13 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         //本地人脸库初始化
         FaceServer.getInstance().init(this);
 
+        initData();
+
         initView();
+    }
+
+    private void initData() {
+        user = (User) getIntent().getSerializableExtra(Constants.INTENT_KEY_USER);
     }
 
     private void initView() {
@@ -445,7 +452,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
                             .flQueueSize(MAX_DETECT_NUM)
                             .previewSize(previewSize)
                             .faceListener(faceListener)
-                            .trackedFaceCount(trackedFaceCount == null ? ConfigUtil.getTrackedFaceCount(RegisterAndRecognizeActivity.this.getApplicationContext()) : trackedFaceCount)
+                            .trackedFaceCount(trackedFaceCount == null ? ConfigUtil.getTrackedFaceCount(LoginByFace.this.getApplicationContext()) : trackedFaceCount)
                             .build();
                 }
             }
@@ -528,7 +535,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
             Observable.create(new ObservableOnSubscribe<Boolean>() {
                 @Override
                 public void subscribe(ObservableEmitter<Boolean> emitter) {
-                    boolean success = FaceServer.getInstance().registerNv21(RegisterAndRecognizeActivity.this, nv21.clone(), previewSize.width, previewSize.height,
+                    boolean success = FaceServer.getInstance().registerNv21(LoginByFace.this, nv21.clone(), previewSize.width, previewSize.height,
                             facePreviewInfoList.get(0).getFaceInfo(), currentUser.getName() + ":" + currentUser.getId());
                     emitter.onNext(success);
                 }
@@ -665,7 +672,9 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
                         }
 
 //                        Log.i(TAG, "onNext: fr search get result  = " + System.currentTimeMillis() + " trackId = " + requestId + "  similar = " + compareResult.getSimilar());
-                        if (compareResult.getSimilar() > SIMILAR_THRESHOLD) {
+
+                        int userId = StringUtil.getUserId(compareResult.getUserName());
+                        if (compareResult.getSimilar() > SIMILAR_THRESHOLD && userId == user.getId()) {
                             boolean isAdded = false;
                             if (compareResultList == null) {
                                 requestFeatureStatusMap.put(requestId, RequestFeatureStatus.FAILED);
