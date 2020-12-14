@@ -185,6 +185,9 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
     };
     private UserDao userDao;
     private DaoSession daoSession;
+    private ArrayList<User> users;
+    private String[] names;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,11 +196,11 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
         //保持亮屏
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WindowManager.LayoutParams attributes = getWindow().getAttributes();
-            attributes.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-            getWindow().setAttributes(attributes);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            WindowManager.LayoutParams attributes = getWindow().getAttributes();
+//            attributes.systemUiVisibility = View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+//            getWindow().setAttributes(attributes);
+//        }
 
         // Activity启动后就锁定为启动时的方向
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
@@ -235,8 +238,8 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
 
         DaoSession daoSession = App.getAppContext().getDaoSession();
         UserDao userDao = daoSession.getUserDao();
-        ArrayList<User> users = (ArrayList<User>) userDao.queryBuilder().list();
-        String[] names = new String[users.size()];
+        users = (ArrayList<User>) userDao.queryBuilder().list();
+        names = new String[users.size()];
         for (int i = 0; i < users.size(); i++) {
             User user = users.get(i);
             names[i] = user.getName();
@@ -254,7 +257,7 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int pos, long id) {
 
-                Toast.makeText(RegisterAndRecognizeActivity.this, "你点击的是:"+names[pos], 2000).show();
+                currentUser = users.get(pos);
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -570,9 +573,8 @@ public class RegisterAndRecognizeActivity extends BaseActivity implements ViewTr
             Observable.create(new ObservableOnSubscribe<Boolean>() {
                 @Override
                 public void subscribe(ObservableEmitter<Boolean> emitter) {
-
                     boolean success = FaceServer.getInstance().registerNv21(RegisterAndRecognizeActivity.this, nv21.clone(), previewSize.width, previewSize.height,
-                            facePreviewInfoList.get(0).getFaceInfo(), "registered " + faceHelper.getTrackedFaceCount());
+                            facePreviewInfoList.get(0).getFaceInfo(), currentUser.getName() + ":" + currentUser.getId());
                     emitter.onNext(success);
                 }
             })

@@ -3,6 +3,7 @@ package com.supcon.showroomdemo
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import com.arcsoft.face.ActiveFileInfo
@@ -13,6 +14,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
 import com.supcon.showroomdemo.activity.RegisterAndRecognizeActivity
 import com.supcon.showroomdemo.common.Constants
+import com.supcon.showroomdemo.faceserver.FaceServer
 import com.supcon.showroomdemo.model.DaoSession
 import com.supcon.showroomdemo.model.User
 import com.supcon.showroomdemo.model.UserDao
@@ -44,6 +46,10 @@ class MainActivity : BaseActivity() {
             startActivity(intent)
         }
 
+        bt_delete.setOnClickListener {
+            clearFaces()
+        }
+
         // get the note DAO
         daoSession = (application as App).daoSession
         userDao = daoSession?.userDao
@@ -55,7 +61,7 @@ class MainActivity : BaseActivity() {
             val appArray = JSONObject(
                 Util.getJson(
                     this,
-                    "app_init.json"
+                    "default_users.json"
                 )
             ).getJSONArray("default_users")
             for (i in 0 until appArray.length()) {
@@ -132,6 +138,28 @@ class MainActivity : BaseActivity() {
 
     protected fun showLongToast(s: String?) {
         Toast.makeText(applicationContext, s, Toast.LENGTH_LONG).show()
+    }
+
+    fun clearFaces() {
+        val faceNum: Int = FaceServer.getInstance().getFaceNumber(this)
+        if (faceNum == 0) {
+            showToast(getString(R.string.batch_process_no_face_need_to_delete))
+        } else {
+            val dialog =
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.batch_process_notification)
+                    .setMessage(getString(R.string.batch_process_confirm_delete, faceNum))
+                    .setPositiveButton(
+                        R.string.ok
+                    ) { dialog, which ->
+                        val deleteCount: Int =
+                            FaceServer.getInstance().clearAllFaces(this@MainActivity)
+                        showToast("$deleteCount faces cleared!")
+                    }
+                    .setNegativeButton(R.string.cancel, null)
+                    .create()
+            dialog.show()
+        }
     }
 
     companion object {

@@ -1,32 +1,32 @@
 {
   "default_users": [
     {
-      "name": "姚冰0",
+      "name": "姚冰",
       "psd": "123456",
       "id": 1,
       "nfcId": 1,
       "faceId": 1
     },
     {
-      "name": "姚冰1",
+      "name": "张三",
       "psd": "123456",
       "id": 2,
-      "nfcId": 1,
-      "faceId": 1
+      "nfcId": 2,
+      "faceId": 2
     },
     {
-      "name": "姚冰2",
+      "name": "李四",
       "psd": "123456",
       "id": 3,
-      "nfcId": 1,
-      "faceId": 1
+      "nfcId": 3,
+      "faceId": 3
     },
     {
-      "name": "姚冰3",
+      "name": "王五",
       "psd": "123456",
       "id": 4,
-      "nfcId": 1,
-      "faceId": 1
-    },
+      "nfcId": 4,
+      "faceId": 4
+    }
   ]
 }
