@@ -13,7 +13,6 @@ import com.arcsoft.face.enums.RuntimeABI
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
 import com.supcon.showroomdemo.activity.LoginByCardActivity
-import com.supcon.showroomdemo.activity.LoginByFaceActivity
 import com.supcon.showroomdemo.activity.NetSettingActivity
 import com.supcon.showroomdemo.activity.RegisterActivity
 import com.supcon.showroomdemo.common.Constants
@@ -21,8 +20,15 @@ import com.supcon.showroomdemo.faceserver.FaceServer
 import com.supcon.showroomdemo.model.DaoSession
 import com.supcon.showroomdemo.model.User
 import com.supcon.showroomdemo.model.UserDao
+import com.supcon.showroomdemo.model.api.TestAPI
+import com.supcon.showroomdemo.model.bean.TestEntity
+import com.supcon.showroomdemo.model.contract.TestContract
+import com.supcon.showroomdemo.presenter.TestPresenter
 import com.supcon.showroomdemo.util.Util
+import com.yaobing.module_apt.Presenter
+import com.yaobing.module_middleware.Utils.ToastUtil
 import com.yaobing.module_middleware.activity.BaseActivity
+import com.yaobing.module_middleware.activity.BasePresenterActivity
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -32,7 +38,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONException
 import org.json.JSONObject
 
-class MainActivity : BaseActivity() {
+@Presenter(value = [TestPresenter::class])
+class MainActivity : BasePresenterActivity(),TestContract.View {
     private var userDao: UserDao? = null
     private var daoSession: DaoSession? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,9 +72,7 @@ class MainActivity : BaseActivity() {
             startActivity(intent)
         }
         bt_test_login.setOnClickListener {
-            val intent = Intent()
-            intent.setClass(this, NetSettingActivity::class.java)
-            startActivity(intent)
+            presenterRouter.create(TestAPI::class.java).login()
         }
 
         // get the note DAO
@@ -185,5 +190,12 @@ class MainActivity : BaseActivity() {
     companion object {
         private const val TAG = "MainActivity"
     }
+
+    override fun loginSuccess(entity: TestEntity?) {
+        ToastUtil.showToast(this,"成功")
+    }
+
+    override fun loginFailed(errorMsg: String?) {
+        ToastUtil.showToast(this,"失败")    }
 
 }

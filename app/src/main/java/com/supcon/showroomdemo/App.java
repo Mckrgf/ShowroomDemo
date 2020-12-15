@@ -2,6 +2,8 @@ package com.supcon.showroomdemo;
 import com.supcon.showroomdemo.model.DaoMaster;
 import com.supcon.showroomdemo.model.DaoSession;
 import com.yaobing.module_middleware.BaseApp;
+import com.yaobing.module_middleware.MiddleWareConstant;
+import com.yaobing.module_middleware.Utils.SharedPreferencesUtils;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -31,7 +33,9 @@ public class App extends BaseApp {
         // note: you need to add SQLCipher to your dependencies, check the build.gradle file
         // DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db-encrypted");
         // Database db = helper.getEncryptedWritableDb("encryption-key");
-
+        BaseApp.setIp("192.168.90.49");
+        BaseApp.setPort("8080");
+        SharedPreferencesUtils.setParam(BaseApp.getInstance(), MiddleWareConstant.SPKey.URL_ENABLE, false);
         daoSession = new DaoMaster(db).newSession();
     }
 

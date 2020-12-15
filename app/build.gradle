@@ -44,7 +44,7 @@ dependencies {
 
     implementation 'com.github.Mckrgf.FrameMvpProject:module_apt:1.1.7'
     implementation 'com.github.Mckrgf.FrameMvpProject:module_common_view:1.1.7'
-    implementation 'com.github.Mckrgf.FrameMvpProject:module_compiler:1.1.7'
+    kapt 'com.github.Mckrgf.FrameMvpProject:module_compiler:1.1.7'
     implementation 'com.github.Mckrgf.FrameMvpProject:module_middleware:1.1.7'
 
     implementation 'com.android.support:recyclerview-v7:28.0.0'
