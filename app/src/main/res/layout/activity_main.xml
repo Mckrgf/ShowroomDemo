@@ -32,5 +32,19 @@
         android:text="清除人脸信息" />
 
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_net_set"
+        android:text="网络设置" />
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试登录"
+        android:id="@+id/bt_test_login"/>
+
+
 
 </LinearLayout>

@@ -15,4 +15,10 @@ object Constants {
     const val VERTICAL_OFFSET = 0
 
     const val INTENT_KEY_USER = "INTENT_KEY_USER"
+
+
+    const val IP_KEY = "IP_KEY"
+    const val DEFAULT_IP = "192.168.90.49"
+    const val PORT_KEY = "PORT_KEY"
+    const val DEFAULT_PORT = "8080"
 }

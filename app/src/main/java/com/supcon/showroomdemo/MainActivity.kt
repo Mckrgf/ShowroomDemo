@@ -14,6 +14,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
 import com.supcon.showroomdemo.activity.LoginByCardActivity
 import com.supcon.showroomdemo.activity.LoginByFaceActivity
+import com.supcon.showroomdemo.activity.NetSettingActivity
 import com.supcon.showroomdemo.activity.RegisterActivity
 import com.supcon.showroomdemo.common.Constants
 import com.supcon.showroomdemo.faceserver.FaceServer
@@ -55,6 +56,17 @@ class MainActivity : BaseActivity() {
         bt_login.setOnClickListener {
             val intent = Intent()
             intent.setClass(this,LoginByCardActivity::class.java)
+            startActivity(intent)
+        }
+
+        bt_net_set.setOnClickListener {
+            val intent = Intent()
+            intent.setClass(this, NetSettingActivity::class.java)
+            startActivity(intent)
+        }
+        bt_test_login.setOnClickListener {
+            val intent = Intent()
+            intent.setClass(this, NetSettingActivity::class.java)
             startActivity(intent)
         }
 

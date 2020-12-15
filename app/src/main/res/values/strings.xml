@@ -82,5 +82,4 @@
     <string name="batch_process_finished_info">process finished!\ntotal count =  %d \nsuccess count = %d \nfailed count = %d \nfailed images are in directory \' %s \'</string>
 
 
-
 </resources>
