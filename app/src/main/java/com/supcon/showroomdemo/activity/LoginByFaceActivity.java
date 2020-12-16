@@ -68,21 +68,18 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.supcon.showroomdemo.common.Constants.FAIL_RETRY_INTERVAL;
+import static com.supcon.showroomdemo.common.Constants.MAX_DETECT_NUM;
+import static com.supcon.showroomdemo.common.Constants.MAX_RETRY_TIME;
+import static com.supcon.showroomdemo.common.Constants.REGISTER_STATUS_DONE;
+import static com.supcon.showroomdemo.common.Constants.REGISTER_STATUS_PROCESSING;
+import static com.supcon.showroomdemo.common.Constants.REGISTER_STATUS_READY;
+import static com.supcon.showroomdemo.common.Constants.SIMILAR_THRESHOLD;
+import static com.supcon.showroomdemo.common.Constants.WAIT_LIVENESS_INTERVAL;
+
 public class LoginByFaceActivity extends BaseActivity implements ViewTreeObserver.OnGlobalLayoutListener {
     private static final String TAG = "RegisterAndRecognize";
-    private static final int MAX_DETECT_NUM = 10;
-    /**
-     * 当FR成功，活体未成功时，FR等待活体的时间
-     */
-    private static final int WAIT_LIVENESS_INTERVAL = 100;
-    /**
-     * 失败重试间隔时间（ms）
-     */
-    private static final long FAIL_RETRY_INTERVAL = 1000;
-    /**
-     * 出错重试最大次数
-     */
-    private static final int MAX_RETRY_TIME = 3;
+
 
     private CameraHelper cameraHelper;
     private DrawHelper drawHelper;
@@ -115,18 +112,7 @@ public class LoginByFaceActivity extends BaseActivity implements ViewTreeObserve
      * 活体检测的开关
      */
     private boolean livenessDetect = true;
-    /**
-     * 注册人脸状态码，准备注册
-     */
-    private static final int REGISTER_STATUS_READY = 0;
-    /**
-     * 注册人脸状态码，注册中
-     */
-    private static final int REGISTER_STATUS_PROCESSING = 1;
-    /**
-     * 注册人脸状态码，注册结束（无论成功失败）
-     */
-    private static final int REGISTER_STATUS_DONE = 2;
+
 
     private int registerStatus = REGISTER_STATUS_DONE;
     /**
@@ -160,10 +146,7 @@ public class LoginByFaceActivity extends BaseActivity implements ViewTreeObserve
     private Switch switchLivenessDetect;
 
     private static final int ACTION_REQUEST_PERMISSIONS = 0x001;
-    /**
-     * 识别阈值
-     */
-    private static final float SIMILAR_THRESHOLD = 0.8F;
+
 
     private ArrayList<User> users;
     private String[] names;
@@ -239,7 +222,7 @@ public class LoginByFaceActivity extends BaseActivity implements ViewTreeObserve
     private void initEngine() {
         ftEngine = new FaceEngine();
         ftInitCode = ftEngine.init(this, DetectMode.ASF_DETECT_MODE_VIDEO, ConfigUtil.getFtOrient(this),
-                16, MAX_DETECT_NUM, FaceEngine.ASF_FACE_DETECT);
+                16, Constants.MAX_DETECT_NUM, FaceEngine.ASF_FACE_DETECT);
 
         frEngine = new FaceEngine();
         frInitCode = frEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
@@ -721,8 +704,6 @@ public class LoginByFaceActivity extends BaseActivity implements ViewTreeObserve
     }
 
     /**
-     * 将准备注册的状态置为{@link #REGISTER_STATUS_READY}
-     *
      * @param view 注册按钮
      */
     public void register(View view) {

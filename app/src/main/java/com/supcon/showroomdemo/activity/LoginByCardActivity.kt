@@ -13,6 +13,7 @@ import com.supcon.showroomdemo.common.Constants
 import com.supcon.showroomdemo.model.UserDao
 import com.supcon.showroomdemo.util.DataTransform
 
+@Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class LoginByCardActivity : BaseNFCActivity(), View.OnClickListener {
     //读取出来的id
     private var mId: String? = null
@@ -31,13 +32,13 @@ class LoginByCardActivity : BaseNFCActivity(), View.OnClickListener {
             if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action || NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
                 //处理该intent
                 processIntent(intent)
-                ParseID()
+                parseID()
             }
         } catch (e: Exception) {
         }
     }
 
-    private fun ParseID() {
+    private fun parseID() {
         val userDao = App.getAppContext().daoSession.userDao
         val users = userDao.queryBuilder().where(UserDao.Properties.NfcId.eq(mId)).list()
         if (users.size > 0) {
@@ -58,7 +59,7 @@ class LoginByCardActivity : BaseNFCActivity(), View.OnClickListener {
             if (NfcAdapter.ACTION_TAG_DISCOVERED == action || NfcAdapter.ACTION_TECH_DISCOVERED == action || NfcAdapter.ACTION_NDEF_DISCOVERED == action) {
                 //处理该intent
                 processIntent(intent)
-                ParseID()
+                parseID()
             }
         } catch (e: Exception) {
         }
@@ -69,8 +70,7 @@ class LoginByCardActivity : BaseNFCActivity(), View.OnClickListener {
      */
     private fun processIntent(intent: Intent): String? {
         //取出封装在intent中的TAG
-        val tagFromIntent =
-            intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
+        val tagFromIntent = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
         val uidBytes = tagFromIntent.id
         mId = DataTransform.bytesToHexString(uidBytes)
         return mId

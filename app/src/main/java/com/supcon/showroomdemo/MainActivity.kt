@@ -9,7 +9,6 @@ import android.widget.Toast
 import com.arcsoft.face.ActiveFileInfo
 import com.arcsoft.face.ErrorInfo
 import com.arcsoft.face.FaceEngine
-import com.arcsoft.face.enums.RuntimeABI
 import com.blankj.utilcode.util.LogUtils
 import com.google.gson.Gson
 import com.supcon.showroomdemo.activity.LoginByCardActivity
@@ -27,7 +26,6 @@ import com.supcon.showroomdemo.presenter.TestPresenter
 import com.supcon.showroomdemo.util.Util
 import com.yaobing.module_apt.Presenter
 import com.yaobing.module_middleware.Utils.ToastUtil
-import com.yaobing.module_middleware.activity.BaseActivity
 import com.yaobing.module_middleware.activity.BasePresenterActivity
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -71,24 +69,19 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
             intent.setClass(this, NetSettingActivity::class.java)
             startActivity(intent)
         }
+
         bt_test_login.setOnClickListener {
             presenterRouter.create(TestAPI::class.java).login()
         }
 
-        // get the note DAO
-        daoSession = (application as App).daoSession
-        userDao = daoSession?.userDao
         initDB()
     }
 
     private fun initDB() {
         try {
-            val appArray = JSONObject(
-                Util.getJson(
-                    this,
-                    "default_users.json"
-                )
-            ).getJSONArray("default_users")
+            daoSession = (application as App).daoSession
+            userDao = daoSession?.userDao
+            val appArray = JSONObject(Util.getJson(this, "default_users.json")).getJSONArray("default_users")
             for (i in 0 until appArray.length()) {
                 val userJson = appArray[i] as JSONObject
                 val user =
@@ -111,13 +104,11 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
 
     /**
      * 激活引擎
-     *
-     * @param view
      */
     fun activeEngine() {
         Observable.create<Int> { emitter ->
-            val runtimeABI: RuntimeABI = FaceEngine.getRuntimeABI()
-            val start = System.currentTimeMillis()
+//            val runtimeABI: RuntimeABI = FaceEngine.getRuntimeABI()
+//            val start = System.currentTimeMillis()
             val activeCode: Int = FaceEngine.activeOnline(this@MainActivity, Constants.APP_ID, Constants.SDK_KEY)
             emitter.onNext(activeCode)
         }
@@ -126,11 +117,11 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
                 .subscribe(object : Observer<Int> {
                     override fun onSubscribe(d: Disposable) {}
                     override fun onNext(activeCode: Int) {
-                        when {
-                            activeCode === ErrorInfo.MOK -> {
+                        when (activeCode) {
+                            ErrorInfo.MOK -> {
                                 showToast("成功")
                             }
-                            activeCode === ErrorInfo.MERR_ASF_ALREADY_ACTIVATED -> {
+                            ErrorInfo.MERR_ASF_ALREADY_ACTIVATED -> {
                                 showToast("已经更新过")
                             }
                             else -> {
@@ -157,12 +148,8 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
                     override fun onComplete() {}
                 })
     }
-    protected fun showToast(s: String?) {
+    fun showToast(s: String?) {
         Toast.makeText(applicationContext, s, Toast.LENGTH_SHORT).show()
-    }
-
-    protected fun showLongToast(s: String?) {
-        Toast.makeText(applicationContext, s, Toast.LENGTH_LONG).show()
     }
 
     fun clearFaces() {
@@ -176,7 +163,7 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
                     .setMessage(getString(R.string.batch_process_confirm_delete, faceNum))
                     .setPositiveButton(
                         R.string.ok
-                    ) { dialog, which ->
+                    ) { _, _ ->
                         val deleteCount: Int =
                             FaceServer.getInstance().clearAllFaces(this@MainActivity)
                         showToast("$deleteCount faces cleared!")
@@ -197,5 +184,4 @@ class MainActivity : BasePresenterActivity(),TestContract.View {
 
     override fun loginFailed(errorMsg: String?) {
         ToastUtil.showToast(this,"失败")    }
-
 }
